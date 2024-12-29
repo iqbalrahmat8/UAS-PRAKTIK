@@ -1,0 +1,32 @@
+import RPi.GPIO as GPIO
+import time
+
+# Konfigurasi pin
+PIR_PIN = 17  # Pin untuk sensor PIR
+BUZZER_PIN = 18  # Pin untuk buzzer
+
+# Setup GPIO
+GPIO.setmode(GPIO.BCM)  # Menggunakan nomor pin BCM
+GPIO.setup(PIR_PIN, GPIO.IN)  # Set pin PIR sebagai input
+GPIO.setup(BUZZER_PIN, GPIO.OUT)  # Set pin buzzer sebagai output
+
+try:
+    print("Sistem Alarm Siap. Menunggu gerakan...")
+    time.sleep(2)  # Tunggu sensor stabil
+
+    while True:
+        if GPIO.input(PIR_PIN):  # Jika gerakan terdeteksi
+            print("Gerakan terdeteksi! Mengaktifkan alarm...")
+            GPIO.output(BUZZER_PIN, GPIO.HIGH)  # Nyalakan buzzer
+            time.sleep(1)  # Buzzer menyala selama 1 detik
+            GPIO.output(BUZZER_PIN, GPIO.LOW)  # Matikan buzzer
+            time.sleep(1)  # Tunggu sebelum membaca lagi
+        else:
+            print("Tidak ada gerakan.")
+            time.sleep(0.5)  # Tunggu setengah detik sebelum membaca lagi
+
+except KeyboardInterrupt:
+    print("Program dihentikan.")
+
+finally:
+    GPIO.cleanup()  # Bersihkan konfigurasi GPIO
